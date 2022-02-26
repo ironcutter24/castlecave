@@ -16,21 +16,21 @@ game_over = false
 function _init()
 	spawn_enemies()
 
-	player_i = new_obj(
-		t_player(),
-		16, 16
+	player_i = new_obj(t_player(),
+		2,2 //game start
+		//71,6 //double jump
 	)
 	player_i.tile.ly=1
 	
 	orb_i = new_obj(
 		t_orb(),
-		71 * 8, 10 * 8
+		71,10
 	)
 	orb_i.tile.ly = -1
 	anim:new(orb_i, {50, 51})
 	
-	new_obj(t_chkpt(), 20*8,3*8)
-	new_obj(t_chkpt(), 43*8,3*8)
+	new_obj(t_chkpt(), 20,3)
+	new_obj(t_chkpt(), 43,3)
 	
 	foreach(objects, init_obj)
 	foreach(anims, init_anims)
@@ -158,8 +158,8 @@ objects = {}
 function new_obj(_type,_x,_y,_cb)
 	local obj = {}
 	obj.type = _type
-	obj.x = _x
-	obj.y = _y
+	obj.x = _x*8
+	obj.y = _y*8
 	
 	obj.rem = {x=0,y=0}
 	
@@ -410,15 +410,15 @@ end
 -- enemies --
 
 function spawn_enemies()
-	new_obj(t_enm_walk(), 11*8, 9*8, ch_dir)
-	new_obj(t_enm_jump(), 112, 16)
+	new_obj(t_enm_walk(), 11,9, ch_dir)
+	new_obj(t_enm_jump(), 14,2)
 	
-	new_obj(t_enm_jump(), 25*8, 6*8)
+	new_obj(t_enm_jump(), 25,6)
 	
-	new_obj(t_enm_walk(), 36*8, 6*8)
+	new_obj(t_enm_walk(), 36,6)
 	
-	new_obj(t_enm_walk(), 56*8, 8*8)
-	new_obj(t_enm_jump(), 52*8, 5*8)
+	new_obj(t_enm_walk(), 56,8)
+	new_obj(t_enm_jump(), 52,5)
 end
 
 function on_coll_enm(o)
