@@ -176,18 +176,17 @@ function new_obj(_type,_x,_y,_cb)
 		has_anim=true,
 	}
 	try(_cb, obj)
-	add(objects, obj)
-	return obj
+	return add(objects, obj)
 end
 
 function coll(a, b)
 	return (
 		a.x+a.box.x <= b.x+b.box.w-1
-		and
+			and
 		b.x+b.box.x <= a.x+a.box.w-1
-		and
+			and
 		a.y+a.box.y <= b.y+b.box.h-1
-		and
+			and
 		b.y+b.box.y <= a.y+a.box.h-1
 	)
 end
@@ -389,9 +388,7 @@ function anim:new(_obj,_imgs)
  self.imgs = _imgs
  self.img_index = false
  
- add(anims,o)
- 
- return o
+ return add(anims,o)
 end
 
 function anim:update()
@@ -421,7 +418,8 @@ function spawn_enemies()
 	new_obj(t_enm_jump(), 52,5)
 	
 	
- //new_obj(t_enm_star(), 12,4)
+ //app = new_obj(t_enm_star(), 12,4)
+ //anim:new(app, {50, 51})
 end
 
 function on_coll_enm(o)
