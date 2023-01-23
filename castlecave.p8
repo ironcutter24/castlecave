@@ -1,10 +1,10 @@
 pico-8 cartridge // http://www.pico-8.com
-version 36
+version 38
 __lua__
 -- main --
 
-//#include castle-cave/main.h
-//#include castle-cave/player.h
+//#include castlecave/main.h
+//#include castlecave/player.h
 
 gravity = .8
 dt = 1/30
@@ -123,6 +123,9 @@ function size(tb)
 	return s
 end
 
+function in_range(val, a, b)
+	return val >= a and val <= b
+end
 
 -- timer --
 
@@ -325,6 +328,27 @@ function is_dmg(x, y)
 end
 
 function is_edge(x, y)
+
+// iterate moving platforms
+
+	for _, v in ipairs(platforms) do
+		if(
+			in_range(
+				x,
+				v.x + v.box.x,
+				v.x + v.box.x + v.box.w
+			)
+			and
+			in_range(
+				y,
+				v.y + v.box.y,
+				v.y + v.box.y + v.box.h
+			)
+		) then
+			return true
+		end
+	end
+
 	return fget(mget(x/8,y/8),2)
 end
 
@@ -353,6 +377,7 @@ function on_coll_chkpt(o)
 	o.type.is_active = true
 	o.tile.id = 65
 	
+	player_i.type.lives = max_lives
 	player_i.type.last_cp = {x=o.x,y=o.y+8}
 	
 	sfx(7)
@@ -521,9 +546,12 @@ end
 -->8
 -- player --
 
+max_lives = 4
+
 function player_init(o)
 	o.box = {x=0,y=0,w=8,h=6}
 	o.tile.id=36
+	o.type.lives = max_lives
 	
 	o.h_spd = 2
 	
@@ -556,6 +584,18 @@ function dmg_ply()
 	
 	o.x = o.type.last_cp.x
 	o.y = o.type.last_cp.y
+end
+
+function heal_ply()
+	o = player_i
+	if(o.type.lives < max_lives) then
+		o.type.lives += 1
+	end
+end
+
+function full_heal_ply()
+	o = player_i
+	o.type.lives = max_lives
 end
 
 function player_pu()
@@ -663,7 +703,7 @@ function t_player()
 	o.init = player_init
 	o.update = player_update
 	
-	o.lives = 3
+	o.lives = 0
 	o.double_jump = false
 	o.extra_jumps = 0
 	o.last_cp = {x, y}
@@ -699,13 +739,18 @@ end
 -->8
 -- platforms --
 
+platforms = {}
+
 function spawn_platforms()
-	new_obj(t_platform(5), 5,7)
+	new_obj(t_platform(1), 3,7)
+	//new_obj(t_platform(5), 5,7)
 end
 
 function init_platform(o)
-	o.box = {x=0,y=0,w=8,h=4}
+	o.box = {x=0,y=0,w=8,h=2}
 	o.tile.id = 34
+	
+	add(platforms, o)
 end
 
 function upd_platform(o)
