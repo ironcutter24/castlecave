@@ -97,8 +97,11 @@ function get_movement(o)
 
 	b_up = btn(⬆️, 0)
 	
-	if(b_up and not b_up_old
-			and i.extra_jumps>0) then
+	if(
+        b_up and not b_up_old
+		and
+        i.extra_jumps>0
+    ) then
 		o.v_spd = -4.5
 		sfx(0)
 		i.extra_jumps -= 1

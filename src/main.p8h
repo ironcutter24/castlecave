@@ -115,9 +115,37 @@ function size(tb)
 	return s
 end
 
+function coll(a, b)
+	return (
+		a.x+a.box.x <= b.x+b.box.w-1
+			and
+		b.x+b.box.x <= a.x+a.box.w-1
+			and
+		a.y+a.box.y <= b.y+b.box.h-1
+			and
+		b.y+b.box.y <= a.y+a.box.h-1
+	)
+end
+
+function contains(o, x, y)
+	return
+		in_range(
+			x,
+			o.x + o.box.x,
+			o.x + o.box.x + o.box.w
+		)
+		and
+		in_range(
+			y,
+			o.y + o.box.y,
+			o.y + o.box.y + o.box.h
+		)
+end
+
 function in_range(val, a, b)
 	return val >= a and val <= b
 end
+
 
 -- timer --
 

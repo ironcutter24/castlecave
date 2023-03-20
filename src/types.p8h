@@ -20,6 +20,7 @@ function t_platform(span)
 	//o.on_coll = on_coll_enm
 	o.span=span*8
 	o.offset=0
+	//o.linked={}
 	return o
 end
 

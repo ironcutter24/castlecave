@@ -7,7 +7,8 @@ __lua__
 -->8
 -- objects --
 
-#include src/objects.p8h
+#include src/obj_entities.p8h
+#include src/obj_systems.p8h
 -->8
 -- animation --
 

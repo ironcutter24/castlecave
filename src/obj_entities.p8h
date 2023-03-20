@@ -1,0 +1,85 @@
+-- entities --
+
+objects = {}
+
+function new_obj(_type,_x,_y,_cb)
+	local obj = {}
+	obj.type = _type
+	obj.x = _x*8
+	obj.y = _y*8
+	
+	obj.rem = {x=0,y=0}
+	
+	obj.h_spd = 1
+	obj.v_spd = 0
+	
+	obj.box = {x=0,y=0,w=8,h=8}
+	obj.tile = {
+		id=0,
+		ly=0,
+		w=1,
+		h=1,
+		flipped=false,
+		has_anim=true,
+	}
+	try(_cb, obj)
+	return add(objects, obj)
+end
+
+
+-- powerup orb --
+
+function on_coll_orb(o)
+	player_pu()
+end
+
+
+-- checkpoint --
+
+function init_chkpt(o)
+	o.box = {x=0,y=0,w=8,h=16}
+	o.tile.id = 64
+	o.tile.h = 2
+end
+
+function on_coll_chkpt(o)
+	if(o.type.is_active) then return end
+	o.type.is_active = true
+	o.tile.id = 65
+	
+	player_i.type.lives = max_lives
+	player_i.type.last_cp = {x=o.x,y=o.y+8}
+	
+	sfx(7)
+end
+
+
+-- platforms --
+
+platforms = {}
+
+function spawn_platforms()
+	new_obj(t_platform(1), 3,7)
+	//new_obj(t_platform(5), 5,7)
+end
+
+function init_platform(o)
+	o.box = {x=0,y=0,w=8,h=2}
+	o.tile.id = 34
+	
+	add(platforms, o)
+end
+
+function upd_platform(o)
+	move_x(o, o.h_spd)
+	o.type.offset=o.type.offset+o.h_spd
+
+	if(
+		o.type.offset == o.type.span-1
+		or
+		o.type.offset == 0
+	) then
+		o.h_spd=-o.h_spd
+	end
+end
+
