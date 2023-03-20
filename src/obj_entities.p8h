@@ -82,4 +82,3 @@ function upd_platform(o)
 		o.h_spd=-o.h_spd
 	end
 end
-

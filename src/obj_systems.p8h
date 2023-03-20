@@ -74,10 +74,7 @@ function move_y(o, dy)
 end
 
 function hits(o, cb)
-	x = o.x + o.box.x + o.rem.x
-	y = o.y + o.box.y + o.rem.y
-	w = o.box.w - 1
-	h = o.box.h - 1
+    x, y, w, h = get_bounds(o)
 
 	return (
 		cb(x,y) or cb(x+w,y)
@@ -91,10 +88,7 @@ function hits_blv(o, cb)
 		return false
 	end
 
-	x = o.x + o.box.x + o.rem.x
-	y = o.y + o.box.y + o.rem.y
-	w = o.box.w - 1
-	h = o.box.h - 1
+    x, y, w, h = get_bounds(o)
 
 	return (
 		cb(x,y+h) and not cb(x,y+h-1)
@@ -104,31 +98,56 @@ function hits_blv(o, cb)
 end
 
 function is_grounded(o)
-	b = o.box
-	
-	x = o.x + b.x
-	y = o.y + b.y
+    x, y, w, h = get_bounds_int(o)
 
-	return
-		is_solid(x, y+b.h)
+    pts = {
+        {x, y+h+1},
+        {x+w, y+h+1}
+    }
+
+    out = {}
+    if(
+        is_platform(x, y+h+1, out)
 		or
-		is_solid(x+b.w-1, y+b.h)
-		or
-		is_edge(x, y+b.h)
-		or
-		is_edge(x+b.w-1, y+b.h)
+		is_platform(x+w, y+h+1, out)
+    ) then
+        //out.type.linked = o
+        return true
+    end
+
+	return at_least_one(pts, is_floor)
+end
+
+
+-- collisions --
+
+function is_dmg(x, y)
+	return fget(mget(x/8,y/8),0)
+end
+
+function is_floor(x, y)
+	return is_solid(x,y) or is_edge(x,y)
 end
 
 function is_solid(x, y)
 	return fget(mget(x/8,y/8),3)
 end
 
-function is_dmg(x, y)
-	return fget(mget(x/8,y/8),0)
-end
-
 function is_edge(x, y)
 	y1 = y-1
+
+    if is_platform(x, y, _) then
+        return true
+    end
+
+	return
+		fget(mget(x/8,y/8),2)
+		and not
+		fget(mget(x/8,y1/8),2)
+end
+
+function is_platform(x, y, out)
+    y1 = y-1
 
 	// iterate moving platforms
 	for _, v in ipairs(platforms) do
@@ -137,17 +156,41 @@ function is_edge(x, y)
 			and not
 			contains(v, x, y1)
 		) then
+            out = v
 			return true
 		end
 	end
 
-	return
-		fget(mget(x/8,y/8),2)
-		and not
-		fget(mget(x/8,y1/8),2)
+    return false
 end
 
-function is_floor(x, y)
-	return is_solid(x,y) or is_edge(x,y)
+function at_least_one(objs, cb)
+    for obj in all(objs) do
+        if cb(obj[1], obj[2]) then return true end
+    end
+
+    return false
 end
 
+
+-- bounds --
+
+function get_bounds(o)
+    x, y, w, h = get_bounds_int(o)
+
+    return
+        x + o.rem.x,
+        y + o.rem.y,
+        w, h
+end
+
+function get_bounds_int(o)
+    b = o.box
+
+    x = o.x + b.x
+    y = o.y + b.y
+    w = b.w - 1
+    h = b.h - 1
+
+    return x, y, w, h
+end

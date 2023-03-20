@@ -17,10 +17,10 @@ function t_platform(span)
 	local o = {}
 	o.init = init_platform
 	o.update = upd_platform
-	//o.on_coll = on_coll_enm
+
 	o.span=span*8
 	o.offset=0
-	//o.linked={}
+	o.linked = nil
 	return o
 end
 
@@ -60,6 +60,7 @@ function t_enm_fly(span)
 	o.init = init_enm_fly
 	o.update = upd_enm_fly
 	o.on_coll = on_coll_enm
+
 	o.span=span*8
 	o.offset=0
 	return o
