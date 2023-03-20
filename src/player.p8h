@@ -1,0 +1,125 @@
+max_lives = 4
+
+function player_init(o)
+	o.box = {x=0,y=0,w=8,h=6}
+	o.tile.id=36
+	o.type.lives = max_lives
+	
+	o.h_spd = 2
+	
+	cp = o.type.last_cp
+	cp.x = o.x
+	cp.y = o.y
+end
+
+function player_update(o)
+	ds = get_movement(o)
+	
+	set_flip(o, ds.x)
+	move_x(o, ds.x)
+	move_y(o, ds.y)
+	
+	if(hits(o, is_dmg)) then
+		dmg_ply()
+	end
+end
+
+function dmg_ply()
+	o = player_i
+	o.type.lives -= 1
+	sfx(4)
+	
+	if(o.type.lives <= 0) then
+		game_over = true
+		sfx(2)
+	end
+	
+	o.x = o.type.last_cp.x
+	o.y = o.type.last_cp.y
+end
+
+function heal_ply()
+	o = player_i
+	if(o.type.lives < max_lives) then
+		o.type.lives += 1
+	end
+end
+
+function full_heal_ply()
+	o = player_i
+	o.type.lives = max_lives
+end
+
+function player_pu()
+	i = player_i.type
+	if(i.double_jump) then return end
+	
+	i.double_jump = true
+	sfx(5)
+	
+	orb_i.tile.has_anim=false
+	orb_i.tile.id=49
+end
+
+function set_flip(o,dx)
+	if(dx==0) then return end
+	if(dx >0) then
+		o.tile.flipped = false
+	else
+		o.tile.flipped = true
+	end
+end
+
+b_up_old = false
+function get_movement(o)
+	i = o.type
+	
+	dx=0
+	dy=0
+
+	if(btn(⬅️,0)) then dx-=o.h_spd end
+	if(btn(➡️,0)) then dx+=o.h_spd end
+	
+	if(is_grounded(o)) then
+		//o.type.last_cp={x=o.x,y=o.y}
+		i.extra_jumps = 0
+		
+		o.tile.id = 36
+		o.v_spd = 0
+	else
+		o.v_spd += gravity		
+		if(o.v_spd < 0) then
+			o.tile.id = 38
+		else
+			o.tile.id = 39
+		end
+	end
+
+	b_up = btn(⬆️, 0)
+	
+	if(b_up and not b_up_old
+			and i.extra_jumps>0) then
+		o.v_spd = -4.5
+		sfx(0)
+		i.extra_jumps -= 1
+	end
+
+	if(
+        b_up and not b_up_old
+		and
+        is_grounded(o)
+    ) then
+		o.v_spd = -5.5
+		sfx(0)
+		
+		if(o.type.double_jump) then
+			i.extra_jumps = 1
+		end
+	end
+		
+	b_up_old = b_up
+	dy = o.v_spd
+		
+	move = {x=dx, y=dy}
+	return move
+end

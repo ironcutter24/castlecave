@@ -1,0 +1,146 @@
+gravity = .8
+dt = 1/30
+player_i = {}
+orb_i = {}
+
+game_over = false
+
+function _init()
+	spawn_platforms()
+	spawn_enemies()
+
+	player_i = new_obj(t_player(),
+		2,2 //game start
+		//71,6 //double jump
+	)
+	player_i.tile.ly=1
+	
+	orb_i = new_obj(
+		t_orb(),
+		71,10
+	)
+	orb_i.tile.ly = -1
+	anim:new(orb_i, {50, 51})
+	
+	new_obj(t_chkpt(), 20,3)
+	new_obj(t_chkpt(), 43,3)
+	
+	foreach(objects, init_obj)
+	foreach(anims, init_anims)
+	
+	anim_timer = timer:new()
+	anim_timer:set(anim_dur)
+end
+
+function _update()
+	update_anims()
+
+	if(game_over) then
+		return
+	end
+
+	foreach(objects, update_obj)
+end
+
+function _draw()
+	cls()
+	
+	if(game_over) then
+		map(112, 48, 0, 0, 16, 16)
+		print("reload to play again", 24, 106)
+		return
+	end
+	
+	grid = get_grid(player_i)
+	map(grid.x, grid.y, 0, 0, 16, 16)
+	
+	for i=-1, 1, 1 do
+		draw_obj_ly(i)
+	end
+	
+	draw_hud()
+end
+
+function in_grid(o)
+	p_grid = get_grid(player_i)
+	o_grid = get_grid(o)
+	
+	return p_grid.x==o_grid.x and
+			p_grid.y==o_grid.y
+end
+
+function get_grid(o)
+	return {
+		x = 16 * flr(o.x/128),
+		y = 16 * flr(o.y/128),
+	}
+end
+
+function scr_pos(val)
+	return val-128*flr(val/128)
+end
+
+function draw_hud()
+	l=player_i.type.lives
+
+	for i=1, l, 1 do
+		spr(33, i*10, 8)
+	end
+end
+
+
+-- utilities --
+
+function try(m, o)
+	if(m) then
+		if(o) then m(o)
+		else m()
+		end
+	end
+end
+
+function sign(num)
+	if(num >0) then return  1 end
+	if(num==0) then return  0 end
+	if(num <0) then return -1 end
+end
+
+function size(tb)
+	s=0
+
+	for _ in pairs(tb) do
+		s = s + 1
+	end
+	
+	return s
+end
+
+function in_range(val, a, b)
+	return val >= a and val <= b
+end
+
+-- timer --
+
+timer = {zero=0, duration=0}
+
+function timer:new()
+	local o = {}
+ setmetatable(o, self)
+ self.__index = self
+ self.zero = 0
+ self.duration = 0
+ return o
+end
+
+function timer:set(t)
+	self.duration = t
+	self.zero = time()
+end
+
+function timer:exp()
+	if(self.duration<=0) then
+		return false
+	end
+
+	return time()-self.zero>self.duration
+end

@@ -1,0 +1,111 @@
+function spawn_enemies()
+	new_obj(t_enm_walk(), 11,9, ch_dir)
+	new_obj(t_enm_jump(), 14,2)
+	
+	new_obj(t_enm_jump(), 25,6)
+	
+	new_obj(t_enm_walk(), 36,6)
+	
+	new_obj(t_enm_walk(), 56,8)
+	new_obj(t_enm_jump(), 52,5)
+	
+	new_obj(t_enm_fly(4), 6,4)
+	
+    //app = new_obj(t_enm_star(), 12,4)
+    //anim:new(app, {50, 51})
+end
+
+function on_coll_enm(o)
+	dmg_ply()
+end
+
+
+-- walk enemy --
+
+function init_enm_walk(o)
+	o.box = {x=0,y=2,w=8,h=6}
+	o.tile.id = 53
+end
+
+function upd_enm_walk(o)
+	
+	if(end_of_walkable(o)) then
+		ch_dir(o)
+	end
+
+	if(is_grounded(o)) then
+		o.v_spd = 0
+		move_x(o, o.h_spd)
+	else
+		o.v_spd+= gravity
+	end
+	
+	move_y(o, o.v_spd)
+end
+
+function end_of_walkable(o)
+	if(o.h_spd > 0) then
+		return
+			is_solid(o.x+o.box.x+o.box.w, o.y+o.box.y+o.box.h-1)
+			or not
+			is_floor(o.x+o.box.x+o.box.w, o.y+o.box.y+o.box.h)
+	else
+		return
+			is_solid(o.x+o.box.x-1, o.y+o.box.y+o.box.h-1)
+			or not
+			is_floor(o.x+o.box.x-1, o.y+o.box.y+o.box.h)
+	end
+end
+
+function ch_dir(o)
+	o.h_spd = -o.h_spd
+end
+
+
+-- jump enemy --
+
+function init_enm_jump(o)
+	o.box = {x=0,y=0,w=8,h=8}
+	o.tile.id = 54
+end
+
+function upd_enm_jump(o)
+	if(is_grounded(o)) then
+		o.v_spd = -8
+	else
+		o.v_spd += gravity
+	end
+	
+	move_y(o, o.v_spd)
+end
+
+
+-- flying enemy --
+
+function init_enm_fly(o)
+	o.box = {x=0,y=0,w=8,h=8}
+	o.tile.id = 40
+end
+
+function upd_enm_fly(o)
+	move_x(o, o.h_spd)
+	o.type.offset=o.type.offset+o.h_spd
+
+	if(
+		o.type.offset == o.type.span-1
+		or
+		o.type.offset == 0
+	) then
+		o.h_spd=-o.h_spd
+	end
+	
+	if(o.h_spd == 0) then
+		o.tile.id = 27
+	else
+		if(o.h_spd > 0) then
+			o.tile.id = 28
+		else
+			o.tile.id = 29
+		end
+	end
+end

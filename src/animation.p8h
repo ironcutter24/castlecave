@@ -1,0 +1,44 @@
+anim_dur = .5
+anim_timer = timer:new()
+
+function init_anims(a)
+	a.obj.tile.id = a.imgs[1]
+end
+
+function update_anims()
+	if(anim_timer:exp()) then
+		
+		foreach(anims, upd)
+		
+		anim_timer:set(anim_dur)
+	end
+	
+	function upd(a) a:update() end
+end
+
+anims = {}
+anim = {}
+
+function anim:new(_obj,_imgs)
+    o = {}
+    setmetatable(o, self)
+    self.__index = self
+    self.obj = _obj
+    self.imgs = _imgs
+    self.img_index = false
+ 
+    return add(anims,o)
+end
+
+function anim:update()
+	if(not self.obj.tile.has_anim) then
+		return
+	end
+
+	index=1
+	if(self.state) then
+		index=2
+	end
+	self.state = not self.state
+	self.obj.tile.id = self.imgs[index]
+end

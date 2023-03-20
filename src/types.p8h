@@ -1,0 +1,65 @@
+function t_orb()
+	local o = {}
+	o.on_coll = on_coll_orb
+	return o
+end
+
+function t_chkpt()
+	local o = {}
+	o.init = init_chkpt
+	o.on_coll = on_coll_chkpt
+	
+	o.is_active = false
+	return o
+end
+
+function t_platform(span)
+	local o = {}
+	o.init = init_platform
+	o.update = upd_platform
+	//o.on_coll = on_coll_enm
+	o.span=span*8
+	o.offset=0
+	return o
+end
+
+-- actors --
+
+function t_player()
+	local o = {}
+	o.init = player_init
+	o.update = player_update
+	
+	o.lives = 0
+	o.double_jump = false
+	o.extra_jumps = 0
+	o.last_cp = {x, y}
+	return o
+end
+
+function t_enm_walk()
+	local o = {}
+	o.init = init_enm_walk
+	o.update = upd_enm_walk
+	o.on_coll = on_coll_enm
+	return o
+end
+
+function t_enm_jump()
+	local o = {}
+	o.init = init_enm_jump
+	o.update = upd_enm_jump
+	o.on_coll = on_coll_enm
+	return o
+end
+
+
+function t_enm_fly(span)
+	local o = {}
+	o.init = init_enm_fly
+	o.update = upd_enm_fly
+	o.on_coll = on_coll_enm
+	o.span=span*8
+	o.offset=0
+	return o
+end
