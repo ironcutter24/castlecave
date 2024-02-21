@@ -1,0 +1,34 @@
+function init_levels()
+	--screen 0
+    new_obj(t_enm_walk(), 11, 9, ch_dir)
+	new_obj(t_enm_jump(), 14, 2)
+	
+    --screen 1
+    new_obj(t_chkpt(), 20, 3) --checkpoint
+	new_obj(t_enm_jump(), 25, 6)
+	
+    --screen 2
+    new_obj(t_chkpt(), 43, 3) --checkpoint
+	new_obj(t_enm_walk(), 36, 6)
+	
+    --screen 3
+	new_obj(t_enm_walk(), 56, 8)
+	new_obj(t_enm_jump(), 52, 5)
+	
+    --screen 4
+    orb_i = new_obj(t_orb(), 71, 10) --special item (checkpoint)
+    orb_i.tile.ly = -1
+    anim:new(orb_i, { 50, 51 })
+
+    --screen 5
+    new_obj(t_enm_walk(), 86, 10)
+    new_obj(t_enm_walk(), 89, 10)
+	new_obj(t_enm_fly(6), 88, 5)
+
+    --screen 6
+    new_obj(t_platform(5), 100, 5)
+    new_obj(t_platform(5), 101, 5)
+	
+    --app = new_obj(t_enm_star(), 12,4)
+    --anim:new(app, {50, 51})
+end

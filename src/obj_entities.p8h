@@ -58,11 +58,6 @@ end
 
 platforms = {}
 
-function spawn_platforms()
-	new_obj(t_platform(1), 3,7)
-	//new_obj(t_platform(5), 5,7)
-end
-
 function init_platform(o)
 	o.box = {x=0,y=0,w=8,h=2}
 	o.tile.id = 34

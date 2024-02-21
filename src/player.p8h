@@ -73,7 +73,6 @@ end
 b_up_old = false
 function get_movement(o)
 	i = o.type
-	
 	dx=0
 	dy=0
 
@@ -119,10 +118,10 @@ function get_movement(o)
 			i.extra_jumps = 1
 		end
 	end
-		
+	
 	b_up_old = b_up
 	dy = o.v_spd
-		
+	
 	move = {x=dx, y=dy}
 	return move
 end

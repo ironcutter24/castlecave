@@ -1,20 +1,3 @@
-function spawn_enemies()
-	new_obj(t_enm_walk(), 11,9, ch_dir)
-	new_obj(t_enm_jump(), 14,2)
-	
-	new_obj(t_enm_jump(), 25,6)
-	
-	new_obj(t_enm_walk(), 36,6)
-	
-	new_obj(t_enm_walk(), 56,8)
-	new_obj(t_enm_jump(), 52,5)
-	
-	new_obj(t_enm_fly(4), 6,4)
-	
-    //app = new_obj(t_enm_star(), 12,4)
-    //anim:new(app, {50, 51})
-end
-
 function on_coll_enm(o)
 	dmg_ply()
 end
